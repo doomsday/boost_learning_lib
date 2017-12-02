@@ -6,6 +6,7 @@
 
 #include "main.hpp"
 #include "simple_variant_visitor.hpp"
+#include "print_visitor.hpp"
 
 int main() {
 
@@ -49,8 +50,11 @@ int main() {
   //
   boost::variant<std::string, long, double> v3;
   v3 = 993.3773;
-
   boost::apply_visitor(simple_variant_visitor(), v3);
+
+  // ====== Generic visitors ======
+  //
+  boost::apply_visitor(print_visitor(), v3);
 
   return EXIT_SUCCESS;
 }
