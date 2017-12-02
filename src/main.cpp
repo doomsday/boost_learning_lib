@@ -1,60 +1,44 @@
-//
-// Boost.Optional: Accessing values stored in boost::optional.
-//
 #include <iostream>
 #include <boost/variant.hpp>
 
-#include "main.hpp"
-#include "simple_variant_visitor.hpp"
-#include "print_visitor.hpp"
+#include "variant_json.hpp"
 
 int main() {
 
-  boost::variant<Foo, int, std::string> value;  // Error if Foo not be default constructible.
-  boost::variant<std::string, Foo, Bar> value2;
+  json_value person1 = json_object();
+  json_value person2 = json_object();
+  json_value person3 = json_object();
 
-  // variant initialization and assignment should not result in an
-  // ambiguity over which type to instantiate within the variant.
+  json_object
+      *pp1 = boost::get<json_object>(&person1),
+      *pp2 = boost::get<json_object>(&person2),
+      *pp3 = boost::get<json_object>(&person3);
 
-  value = 1;  // Sets int, not Foo.
-  int *pi = boost::get<int>(&value);  // 'int' is the concrete type for the value we want.
-  assert(pi != 0);
+  (*pp1)["name"] = std::string("Mike Morbid");
+  (*pp1)["profession"] = std::string("farmer");
+  (*pp1)["age"] = 21L;
+  (*pp1)["favourite"] = std::string("Cannibal Corpse");
+  (*pp1)["height"] = 176.1;
 
-  // Overwriting the integer value stored earlier.
-  value = Foo(42);
+  (*pp2)["name"] = std::string("Stuart Regret");
+  (*pp2)["profession"] = std::string("programmer");
+  (*pp2)["age"] = 4L;
+  (*pp2)["favourite"] = std::string("Suffocation");
+  (*pp2)["height"] = 11.0;
 
-  // Overwriting the Foo value stored earlier.
-  value = "foo";
+  (*pp3)["name"] = std::string("Howard Roark");
+  (*pp3)["profession"] = std::string("architect");
+  (*pp3)["age"] = 32L;
+  (*pp3)["favourite"] = std::string("Eggs benedict");
+  (*pp3)["height"] = 185.0;
 
-  // value2 = 1 // Error: can be implicitly converted to Foo or Bar.
+  json_value vt = json_array();
+  json_array *array = boost::get<json_array>(&vt);
+  array->push_back(person1);
+  array->push_back(person2);
+  array->push_back(person3);
 
-  // ====== Accessing values in a variant ======
-  //
-  boost::variant<std::string, int> v1;
-  v1 = "19937";
-
-  int i1;
-  try {
-    i1 = boost::get<int>(v1); // v1 stores a string at this point, this results in an exception being thrown.
-  } catch (std::exception& e) {
-    std::cerr << e.what() << '\n';
-  }
-
-  int *pi1 = boost::get<int>(&v1); // Will return null.
-  assert(pi1 == nullptr);
-
-  // Get the zero-based index of the type of the value that is currently stored in the variant.
-  size_t index = v1.which();  // Returns 0.
-
-  // ====== Compile-time visitation ======
-  //
-  boost::variant<std::string, long, double> v3;
-  v3 = 993.3773;
-  boost::apply_visitor(simple_variant_visitor(), v3);
-
-  // ====== Generic visitors ======
-  //
-  boost::apply_visitor(print_visitor(), v3);
+  boost::apply_visitor(json_print_visitor(), vt);
 
   return EXIT_SUCCESS;
 }
