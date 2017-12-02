@@ -1,37 +1,57 @@
 //
 // Boost.Optional: Accessing values stored in boost::optional.
 //
-
-#include <tuple>
-#include <vector>
 #include <iostream>
-#include <cassert>
+#include <boost/variant.hpp>
 
 #include "main.hpp"
+#include "simple_variant_visitor.hpp"
 
 int main() {
 
-  // Create test data.
-  std::vector<double> prices = get_test_data();
+  boost::variant<Foo, int, std::string> value;  // Error if Foo not be default constructible.
+  boost::variant<std::string, Foo, Bar> value2;
 
-  // Access by element number.
-  std::tuple<size_t, size_t, double> tuple = get_best_transact_days(prices);
-  std::cout << "Tuple #0: " << std::get<0>(tuple) << std::endl;
-  std::cout << "Tuple #1: " << std::get<1>(tuple) << std::endl;
-  std::cout << "Tuple #2: " << std::get<2>(tuple) << std::endl;
+  // variant initialization and assignment should not result in an
+  // ambiguity over which type to instantiate within the variant.
 
-  // Tie.
-  size_t buyDay, sellDay;
-  double profit;
-  std::tie(buyDay, sellDay, profit) = get_best_transact_days(prices);
+  value = 1;  // Sets int, not Foo.
+  int *pi = boost::get<int>(&value);  // 'int' is the concrete type for the value we want.
+  assert(pi != 0);
 
-  // Comparing tuples (relational operators).
-  std::tuple<int, int, std::string> t1 = std::make_tuple(1, 2, "Hello");
-  std::tuple<double, double, const char*> t2 = std::make_tuple(1, 2, "Hell");
-  assert(t1 > t2);
+  // Overwriting the integer value stored earlier.
+  value = Foo(42);
 
-  // Writing generic code using tuples
-  std::cout << "Tuple length: " << tuple_length(tuple);
+  // Overwriting the Foo value stored earlier.
+  value = "foo";
+
+  // value2 = 1 // Error: can be implicitly converted to Foo or Bar.
+
+  // ====== Accessing values in a variant ======
+  //
+  boost::variant<std::string, int> v1;
+  v1 = "19937";
+
+  int i1;
+  try {
+    i1 = boost::get<int>(v1); // v1 stores a string at this point, this results in an exception being thrown.
+  } catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+  }
+
+  int *pi1 = boost::get<int>(&v1); // Will return null.
+  assert(pi1 == nullptr);
+
+  // Get the zero-based index of the type of the value that is currently stored in the variant.
+  size_t index = v1.which();  // Returns 0.
+
+  // ====== Compile-time visitation ======
+  //
+  boost::variant<std::string, long, double> v3;
+  v3 = 993.3773;
+
+  boost::apply_visitor(simple_variant_visitor(), v3);
 
   return EXIT_SUCCESS;
 }
+

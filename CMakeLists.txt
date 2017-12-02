@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 
 set(SOURCE_FILES
         src/main.cpp
-        src/main.hpp)
+        src/main.hpp src/simple_variant_visitor.hpp)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
