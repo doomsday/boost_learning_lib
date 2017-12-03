@@ -6,8 +6,7 @@ set(PROJECTNAME_ARCHITECTURE "x64")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 
 set(SOURCE_FILES
-        src/main.cpp
-        src/variant_json.hpp)
+        src/main.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -22,5 +21,5 @@ if (Boost_FOUND)
 endif ()
 
 target_link_libraries(${PROJECT_NAME})
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "variant_json")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "boost_any")
 

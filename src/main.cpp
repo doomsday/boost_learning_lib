@@ -1,44 +1,61 @@
 #include <iostream>
-#include <boost/variant.hpp>
+#include <boost/any.hpp>
+#include <cassert>
 
-#include "variant_json.hpp"
+class my_value {
+  int value;
+ public:
+  explicit my_value(int i) : value(i) {}
+  int get() const { return value; }
+};
 
 int main() {
 
-  json_value person1 = json_object();
-  json_value person2 = json_object();
-  json_value person3 = json_object();
+  using boost::any_cast;
+  using std::cout;
+  using std::endl;
+  using boost::any;
 
-  json_object
-      *pp1 = boost::get<json_object>(&person1),
-      *pp2 = boost::get<json_object>(&person2),
-      *pp3 = boost::get<json_object>(&person3);
+  // Basic usage.
+  any
+      v1, v2, v3, v4;
 
-  (*pp1)["name"] = std::string("Mike Morbid");
-  (*pp1)["profession"] = std::string("farmer");
-  (*pp1)["age"] = 21L;
-  (*pp1)["favourite"] = std::string("Cannibal Corpse");
-  (*pp1)["height"] = 176.1;
+  assert(v1.empty());
+  const char *hello = "Hello";
+  v1 = hello;
+  v2 = 42;
+  v3 = std::string("Hola");
+  my_value m1(10);
+  v4 = m1;
 
-  (*pp2)["name"] = std::string("Stuart Regret");
-  (*pp2)["profession"] = std::string("programmer");
-  (*pp2)["age"] = 4L;
-  (*pp2)["favourite"] = std::string("Suffocation");
-  (*pp2)["height"] = 11.0;
+  try {
+    cout << any_cast<const char*>(v1) << endl;
+    cout << any_cast<int>(v2) << endl;
+    cout << any_cast<std::string>(v3) << endl;
+    auto x = any_cast<my_value>(v4);
+    cout << x.get() << endl;
+  } catch (std::exception& e) {
+    cout << e.what() << endl;
+  }
 
-  (*pp3)["name"] = std::string("Howard Roark");
-  (*pp3)["profession"] = std::string("architect");
-  (*pp3)["age"] = 32L;
-  (*pp3)["favourite"] = std::string("Eggs benedict");
-  (*pp3)["height"] = 185.0;
+  // Swapping value.
+  any v5 = 19937;
+  any v6 = std::string("Hello");
 
-  json_value vt = json_array();
-  json_array *array = boost::get<json_array>(&vt);
-  array->push_back(person1);
-  array->push_back(person2);
-  array->push_back(person3);
+  assert(any_cast<int>(&v5) != nullptr);
+  assert(any_cast<std::string>(&v6) != nullptr);
 
-  boost::apply_visitor(json_print_visitor(), vt);
+  v5 = 22.36;
+  v5.swap(v6);
+
+  assert(any_cast<std::string>(&v5) != nullptr);
+  assert(any_cast<double>(&v6) != nullptr);
+
+  // Accessing type information (needs RTTI).
+  any value = 20;
+  if (value.type().hash_code() == typeid(int).hash_code()) {
+    cout << any_cast<int>(value) << endl;
+  }
 
   return EXIT_SUCCESS;
 }
