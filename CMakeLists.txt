@@ -21,5 +21,5 @@ if (Boost_FOUND)
 endif ()
 
 target_link_libraries(${PROJECT_NAME})
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "boost_any")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "boost_conversion")
 
