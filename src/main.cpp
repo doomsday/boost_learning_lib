@@ -1,63 +1,42 @@
-#include <boost/predef.h>
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-
 #include <iostream>
+#include <memory>
+
+#include <boost/current_function.hpp>
+#include <cassert>
 
 using std::cout;
-using std::endl;
+using std::shared_ptr;
+using std::make_shared;
 
-void check_os();
-void build_env_info();
+class CanBeShared : public std::enable_shared_from_this<CanBeShared> {
+ public:
+  ~CanBeShared() {
+    cout << BOOST_CURRENT_FUNCTION << '\n';
+  }
+
+  shared_ptr<CanBeShared> share() {
+    return shared_from_this();
+  }
+};
+
+typedef shared_ptr<CanBeShared> CanBeSharedPtr;
+
+void doWork(CanBeShared& obj) {
+  // second sharing
+  CanBeSharedPtr sp = obj.share();
+  cout << "Usage count in doWork " << sp.use_count() << '\n';
+  assert(sp.use_count() == 2);
+  assert(&obj == sp.get());
+
+  // second sharing destroyed
+}
 
 int main() {
-
-  check_os();
-  build_env_info();
+  // first sharing
+  CanBeSharedPtr cbs = make_shared<CanBeShared>();
+  doWork(*cbs.get());
+  cout << cbs.use_count() << '\n';
+  assert(cbs.use_count() == 1);
 
   return EXIT_SUCCESS;
-}
-
-void check_os() {
-  // Identify OS.
-#if defined(BOOST_OS_WINDOWS)
-  cout << "Windows ";
-#elif defined(BOOST_OS_LINUX)
-  cout << "Linux ";
-#elif defined(BOOST_OS_MACOS)
-  cout << "MacOS ";
-#elif defined(BOOST_OS_UNIX)
-  cout << "Anoter UNIX ";
-#endif
-
-  // Identify architecture.
-#if defined(BOOST_ARCH_X86)
-#if defined(BOOST_ARCH_X86_64)
-  cout << "x86-64 bit" << endl;
-#else
-  cout << "x86-32 bit" << endl;
-#endif
-#elif defined(BOOST_ARCH_ARM)
-  cout << "ARM" << endl;
-#else
-  cout << "Other architecture" << endl;
-#endif
-
-  // Identify compiler.
-#if defined(BOOST_COMP_GNUC)
-  cout << "GCC, Version: " << BOOST_COMP_GNUC << endl;
-#elif defined(BOOST_COMP_MSVC)
-  cout << "MSVC, Version: " << BOOST_COMP_MSVC << endl;
-#else
-  cout << "Other compiler" << endl;
-#endif
-
-}
-
-void build_env_info() {
-  cout << "Compiler: " << BOOST_COMPILER << endl
-       << "Platform: " << BOOST_PLATFORM << endl
-       << "Library: " << BOOST_STDLIB << endl;
-
-  cout << "Boost version: " << BOOST_LIB_VERSION << "[" << BOOST_VERSION << "]" << endl;
 }
