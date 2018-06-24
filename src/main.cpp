@@ -1,42 +1,43 @@
 #include <iostream>
-#include <memory>
+#include <boost/intrusive_ptr.hpp>
 
-#include <boost/current_function.hpp>
-#include <cassert>
+namespace NS {
+  class Bar {
+   public:
+    Bar() : refcount_(0) {}
+    ~Bar() { std::cout << "~Bar invoked" << '\n'; }
 
-using std::cout;
-using std::shared_ptr;
-using std::make_shared;
+    friend void intrusive_ptr_add_ref(Bar *);
+    friend void intrusive_ptr_release(Bar *);
 
-class CanBeShared : public std::enable_shared_from_this<CanBeShared> {
- public:
-  ~CanBeShared() {
-    cout << BOOST_CURRENT_FUNCTION << '\n';
+   private:
+    unsigned long refcount_;
+
+  };
+
+  void intrusive_ptr_add_ref(Bar *b) {
+    b->refcount_++;
   }
 
-  shared_ptr<CanBeShared> share() {
-    return shared_from_this();
+  void intrusive_ptr_release(Bar *b) {
+    if (--b->refcount_ == 0) {
+      delete b;
+    }
   }
-};
 
-typedef shared_ptr<CanBeShared> CanBeSharedPtr;
-
-void doWork(CanBeShared& obj) {
-  // second sharing
-  CanBeSharedPtr sp = obj.share();
-  cout << "Usage count in doWork " << sp.use_count() << '\n';
-  assert(sp.use_count() == 2);
-  assert(&obj == sp.get());
-
-  // second sharing destroyed
-}
+} // end NS
 
 int main() {
-  // first sharing
-  CanBeSharedPtr cbs = make_shared<CanBeShared>();
-  doWork(*cbs.get());
-  cout << cbs.use_count() << '\n';
-  assert(cbs.use_count() == 1);
+
+  // Wrap dynamically-allocated objects. Pass true for the Boolean second
+  // argument so that the intrusive_ptr constructor increments Bar's refcount_
+  // through a call to intrusive_ptr_add_ref(NS::Bar*)
+  boost::intrusive_ptr<NS::Bar> pi(new NS::Bar, true);
+  boost::intrusive_ptr<NS::Bar> pi2(pi);
+
+  assert(pi.get() == pi2.get());
+  std::cout << "pi : " << pi.get() << '\n'
+            << "pi2: " << pi2.get() << '\n';
 
   return EXIT_SUCCESS;
 }
