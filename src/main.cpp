@@ -1,25 +1,13 @@
-#include <iostream>
-#include <memory>
-#include <ctime>
-
-struct FILEDeleter {
-  void operator()(FILE *fp) const {
-    fprintf(stderr, "Deleter invoked\n");
-    if (fp) {
-      fclose(fp);
-    }
-  }
-};
+#include <string>
+#include <boost/algorithm/string.hpp>
+#include <cassert>
 
 int main() {
-  std::shared_ptr<FILE> spfile(fopen("tmp.txt", "a+"), FILEDeleter());
-
-  time_t t;
-  time(&t);
-
-  if (spfile) {
-    fprintf(spfile.get(), "tstamp: %s\n", ctime(&t));
-  }
+  std::string song = "Green-tinted sixties mind";
+  using RangeType = boost::iterator_range<std::string::iterator>;
+  RangeType range = boost::make_iterator_range(song.begin() + 13, song.begin() + 20);
+  boost::to_upper(range);
+  assert(song == "Green-tinted SIXTIES mind");
 
   return EXIT_SUCCESS;
 }
