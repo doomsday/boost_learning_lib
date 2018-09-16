@@ -4,21 +4,14 @@
 #include <iostream>
 
 int main() {
-  const char *haystack = "Mary had a little lamb";
-  const char *needles[] = {"little", "Little", nullptr};
+  using string_range = boost::iterator_range<std::string::const_iterator>;
 
-  for (int i = 0; needles[i] != nullptr; ++i) {
-    auto ret = boost::find_first(haystack, needles[i]);
-//    auto ret = boost::find_nth(haystack, needles[i], 1);
+  std::vector<string_range> matches;
+  std::string str = "He deserted the unit while they trudged through the desert one night.";
 
-    if (ret.begin() == ret.end()) {
-      std::cout << "String [" << needles[i] << "] not found in"
-                << " string [" << haystack << "]\n";
-    } else {
-      std::cout << "String [" << needles[i] << "] found at "
-                << "offset " << ret.begin() - haystack
-                << " in string [" << haystack << "]\n";
-    }
+  boost::find_all(matches, str, "desert");
+  for (auto match : matches) {
+    std::cout << "Found [desert] at offset " << match.begin() - str.begin() << ".\n";
   }
 
   return EXIT_SUCCESS;
