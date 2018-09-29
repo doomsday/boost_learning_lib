@@ -8,11 +8,15 @@ int main() {
 
   try {
 
-    std::string dogtypes = "mongrel, puppy, whelp, hound";
+    /**
+     * If you simply want to split a string using another string as a separator,
+     * you may use boost::iter_split.
+     */
+
+    std::string dogtypes = "mongrel and puppy and whelp and hound";
     std::vector<std::string> dogs;
-    // token_compress_on - adjacent separators are merged together. Otherwise, every
-    // two separators delimit a token
-    boost::split(dogs, dogtypes, boost::is_any_of(" ,"), boost::token_compress_on);
+
+    boost::iter_split(dogs, dogtypes, boost::first_finder(" and "));
 
     for(const std::string& dog : dogs) {
       std::cout << dog << '\n';
