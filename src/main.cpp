@@ -1,22 +1,23 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#include <boost/algorithm/string.hpp>
 
-bool is_newline(char c) {
-  return c == '\n';
-}
+#include <boost/algorithm/string.hpp>
 
 int main() {
 
-  std::string input = "  Hello  ";
-  std::string input2 = "Hello   \n";
+  try {
 
-  std::string input_copy = boost::trim_copy(input);
-  std::string input2_copy = boost::trim_right_copy_if(input2, is_newline);
+    std::string input = "Hello, World! Hello folks!";
 
-  assert(*(input_copy.end() - 1) != ' ');
-  assert(*(input2_copy.end() - 1) != '\n' && *(input2_copy.end() - 1) == ' ');
+    assert(boost::replace_first_copy(input, "Hello", "Hola") == "Hola, World! Hello folks!");
+    assert(boost::erase_first_copy(input, " folks") == "Hello, World! Hello!");
+    assert(boost::replace_head_copy(input, 5, "Hell") == "Hell, World! Hello folks!");
+
+  } catch (const std::exception &e) {
+    std::cout << e.what();
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }
