@@ -1,21 +1,22 @@
 #include <string>
-#include <boost/algorithm/string.hpp>
-#include <boost/range/adaptors.hpp>
 #include <iostream>
+#include <cassert>
+#include <boost/algorithm/string.hpp>
+
+bool is_newline(char c) {
+  return c == '\n';
+}
 
 int main() {
-  std::string str = "funny text";
-  std::string str2(str);
-  // strided adaptor that allows traversing the range by skipping a fxed number of elements at each step
-  auto range = str | boost::adaptors::strided(2); // strided operator |
-  auto range2 = str2 | boost::adaptors::sliced(1, str2.size() - 1)
-                     | boost::adaptors::strided(2);
 
-  boost::to_upper(range);
-  boost::to_upper(range2);
+  std::string input = "  Hello  ";
+  std::string input2 = "Hello   \n";
 
-  std::cout << str << '\n'; // FuNnY TeXt
-  std::cout << str2 << '\n';  // fUnNy tExt
+  std::string input_copy = boost::trim_copy(input);
+  std::string input2_copy = boost::trim_right_copy_if(input2, is_newline);
+
+  assert(*(input_copy.end() - 1) != ' ');
+  assert(*(input2_copy.end() - 1) != '\n' && *(input2_copy.end() - 1) == ' ');
 
   return EXIT_SUCCESS;
 }
