@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <cassert>
+#include <vector>
 
 #include <boost/algorithm/string.hpp>
 
@@ -8,11 +8,15 @@ int main() {
 
   try {
 
-    std::string input = "Hello, World! Hello folks!";
+    std::string dogtypes = "mongrel, puppy, whelp, hound";
+    std::vector<std::string> dogs;
+    // token_compress_on - adjacent separators are merged together. Otherwise, every
+    // two separators delimit a token
+    boost::split(dogs, dogtypes, boost::is_any_of(" ,"), boost::token_compress_on);
 
-    assert(boost::replace_first_copy(input, "Hello", "Hola") == "Hola, World! Hello folks!");
-    assert(boost::erase_first_copy(input, " folks") == "Hello, World! Hello!");
-    assert(boost::replace_head_copy(input, 5, "Hell") == "Hell, World! Hello folks!");
+    for(const std::string& dog : dogs) {
+      std::cout << dog << '\n';
+    }
 
   } catch (const std::exception &e) {
     std::cout << e.what();
