@@ -9,18 +9,13 @@ int main() {
   try {
 
     /**
-     * If you simply want to split a string using another string as a separator,
-     * you may use boost::iter_split.
+     * boost::join and boost::join_if algorithms are pretty useful when you are
+     * trying to string together a sequence of values with some separator between
+     * successive values.
      */
 
-    std::string dogtypes = "mongrel and puppy and whelp and hound";
-    std::vector<std::string> dogs;
-
-    boost::iter_split(dogs, dogtypes, boost::first_finder(" and "));
-
-    for(const std::string& dog : dogs) {
-      std::cout << dog << '\n';
-    }
+    std::vector<std::string> vec {"mongrel", "puppy", "whelp", "hound"};
+    std::cout << boost::join(vec, ", ");
 
   } catch (const std::exception &e) {
     std::cout << e.what();
