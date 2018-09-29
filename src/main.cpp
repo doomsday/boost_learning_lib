@@ -1,24 +1,21 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
+#include <boost/range/adaptors.hpp>
 #include <iostream>
-#include <vector>
-
-template<typename RangeT, typename NeedleT>
-boost::iterator_range<typename boost::range_iterator<RangeT>::type> find_xdigit_token(RangeT &input, NeedleT &needle) {
-  return boost::find(input, boost::last_finder(needle, boost::is_iequal()));
-}
 
 int main() {
-  std::string str = "How little is too little1", needle = "Little";
-  boost::iterator_range<std::string::iterator> token = find_xdigit_token(str, needle);
+  std::string str = "funny text";
+  std::string str2(str);
+  // strided adaptor that allows traversing the range by skipping a fxed number of elements at each step
+  auto range = str | boost::adaptors::strided(2); // strided operator |
+  auto range2 = str2 | boost::adaptors::sliced(1, str2.size() - 1)
+                     | boost::adaptors::strided(2);
 
-  while (token.begin() != token.end()) {
-    if (boost::size(token) > 3) {
-      std::cout << "\'" << token << "\' at position: " << token.begin() - str.begin() << '\n';
-    }
-    boost::iterator_range<std::string::iterator> remnant = boost::make_iterator_range(token.end(), str.end());
-    token = find_xdigit_token(remnant, needle);
-  }
+  boost::to_upper(range);
+  boost::to_upper(range2);
+
+  std::cout << str << '\n'; // FuNnY TeXt
+  std::cout << str2 << '\n';  // fUnNy tExt
 
   return EXIT_SUCCESS;
 }
