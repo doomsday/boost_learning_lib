@@ -4,6 +4,8 @@
 
 #include <boost/algorithm/string.hpp>
 
+bool five_or_less_chars(const std::string& s) { return s.size() <= 5; }
+
 int main() {
 
   try {
@@ -15,7 +17,7 @@ int main() {
      */
 
     std::vector<std::string> vec {"mongrel", "puppy", "whelp", "hound"};
-    std::cout << boost::join(vec, ", ");
+    std::cout << boost::join_if(vec, ", ", five_or_less_chars);
 
   } catch (const std::exception &e) {
     std::cout << e.what();
