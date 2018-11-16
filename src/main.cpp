@@ -13,9 +13,11 @@ int main() {
 
   try {
 
-    string input = R"(Amit Gupta,70,\"Nandanvan\",Ghole Road,Pune,India)";
+    string input = R"(/Alon Ben-Ari/-35-11~/5 Zamenhoff St., Tel Aviv)";
+    // tilde (~) for escaping; hyphen (-) for field separator; forward slash (/) for quotes
+    boost::escaped_list_separator<char> sep('~', '-', '/');
     using tokenizer = boost::tokenizer<boost::escaped_list_separator<string::value_type>>;
-    tokenizer my_tokenizer(input);
+    tokenizer my_tokenizer(input, sep);
 
     for (const string& tok : my_tokenizer) {
       std::cout << tok << '\n';
