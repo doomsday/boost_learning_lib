@@ -5,29 +5,20 @@
 
 int main() {
 
+  /**
+   * Tokenizing records with fields containing metacharacters.
+   */
+
   using std::string;
 
   try {
 
-    string input = "God knows, I've never been a spiritual man!";
-    boost::tokenizer<> tokenized(input);
+    string input = R"(Amit Gupta,70,\"Nandanvan\",Ghole Road,Pune,India)";
+    using tokenizer = boost::tokenizer<boost::escaped_list_separator<string::value_type>>;
+    tokenizer my_tokenizer(input);
 
-    /*
-     * Default tokenizing policy splits the string using whitespace and punctuation
-     * as token delimiters or separators. */
-    for(const string & token : tokenized) {
-      std::cout << token << '\n';
-    }
-
-    std::cout << '\n' << "******************" << "\n\n";
-
-    /*
-     * Split the input based on spaces and punctuation but not split on an apostrophe */
-    boost::char_separator<string::value_type> sep(" \t,.!?;./\"(){}[]<>");  // construct the splitting policy
-    using tokenizer = boost::tokenizer<boost::char_separator<char>>;
-    tokenizer my_tokenizer(input, sep);
-    for (const string & token : my_tokenizer) {
-      std::cout << token << '\n';
+    for (const string& tok : my_tokenizer) {
+      std::cout << tok << '\n';
     }
 
   } catch (const std::exception &e) {
