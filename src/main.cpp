@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <boost/tokenizer.hpp>
+#include "qstring_token_generator.hpp"
 
 int main() {
 
@@ -9,15 +10,15 @@ int main() {
 
   try {
 
-    string input = R"(201408091403290000001881303614419ABNANL2AWSSDEUTDEMM720000000412000EUR)";
-    int lengths[] = {8, 9, 16, 11, 11, 12, 13};
+    std::string input = "I'am taking a train from Frankfurt (am Main) to Frankfurt (an der Oder)";
+    bool skip_empty = true;
+    qstring_token_generator qsep('(', ')', '\\', skip_empty);
+    using qtokenizer = boost::tokenizer<qstring_token_generator>;
+    qtokenizer tokenizer(input, qsep);
 
-    boost::offset_separator ofs(lengths, lengths + 7);
-    using tokenizer = boost::tokenizer<boost::offset_separator>;
-    tokenizer my_tokenizer(input, ofs);
-
-    for (const string& tok : my_tokenizer) {
-      std::cout << tok << '\n';
+    unsigned int n = 0;
+    for (auto& token : tokenizer) {
+      std::cout << ++n << ": " << token << '\n';
     }
 
   } catch (const std::exception &e) {

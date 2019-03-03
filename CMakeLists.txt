@@ -6,7 +6,7 @@ set(PROJECTNAME_ARCHITECTURE "x64")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 
 set(SOURCE_FILES
-        src/main.cpp)
+        src/main.cpp src/qstring_token_generator.cpp src/qstring_token_generator.hpp)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
