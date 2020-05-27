@@ -1,8 +1,7 @@
+#include <boost/regex.hpp>
 #include <string>
+#include <cassert>
 #include <iostream>
-
-#include <boost/tokenizer.hpp>
-#include "qstring_token_generator.hpp"
 
 int main() {
 
@@ -10,16 +9,9 @@ int main() {
 
   try {
 
-    std::string input = "I'am taking a train from Frankfurt (am Main) to Frankfurt (an der Oder)";
-    bool skip_empty = true;
-    qstring_token_generator qsep('(', ')', '\\', skip_empty);
-    using qtokenizer = boost::tokenizer<qstring_token_generator>;
-    qtokenizer tokenizer(input, qsep);
-
-    unsigned int n = 0;
-    for (auto& token : tokenizer) {
-      std::cout << ++n << ": " << token << '\n';
-    }
+    std::string str1 = "Alaska area";
+    boost::regex r1("a.*a");
+    assert(!boost::regex_match(str1, r1));
 
   } catch (const std::exception &e) {
     std::cout << e.what();

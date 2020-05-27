@@ -6,11 +6,12 @@ set(PROJECTNAME_ARCHITECTURE "x64")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 
 set(SOURCE_FILES
-        src/main.cpp src/qstring_token_generator.cpp src/qstring_token_generator.hpp)
+        src/main.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-find_package(Boost 1.64.0 REQUIRED)
+cmake_policy(SET CMP0074 NEW)
+find_package(Boost 1.64.0 REQUIRED regex)
 
 if (Boost_FOUND)
     message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
