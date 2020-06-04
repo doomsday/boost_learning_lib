@@ -1,6 +1,7 @@
-#include <boost/regex.hpp>
+#include <boost/algorithm/string_regex.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
 
 int main() {
 
@@ -9,15 +10,17 @@ int main() {
 
   try {
 
-    string haystack_str = "animal=Llama lives_in=Chile and is related_to=vicuna";
-    boost::regex r3(R"((\w+)=(\w+))");
-    int subindx[] = {2, 1}; // specifying the sub-expressions we are interested in
-    boost::sregex_token_iterator tokit(haystack_str.begin(), haystack_str.end(), r3, subindx), tokend;
+    string line = "All the you touch";
+    std::vector<string> words;
+    boost::find_all_regex(words, line, boost::regex("\\w+"));
 
-    while (tokit != tokend) {
-      cout << *tokit++ << '\n';
-    }
-    cout << '\n';
+    string record = "Pigs on the Wing|Dogs| Pigs| Sheep";
+    std::vector<string> fields;
+    boost::split_regex(fields, record, boost::regex("[\\|]"));
+
+    for (const auto& word: words) { cout << word << ","; }
+    cout << std::endl;
+    for (const auto& field: fields) { cout << field << ","; }
 
   } catch (const std::exception &e) {
     cout << e.what();
