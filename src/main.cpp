@@ -9,13 +9,15 @@ int main() {
 
   try {
 
-    string haystack_str = "An array of papers from the academia on Alaska area's fauna";
-    boost::regex r1(R"(\ba\w*a\b)", boost::regex::icase);
-    boost::sregex_iterator rit(haystack_str.begin(), haystack_str.end(), r1), rend;
+    string haystack_str = "animal=Llama lives_in=Chile and is related_to=vicuna";
+    boost::regex r3(R"((\w+)=(\w+))");
+    int subindx[] = {2, 1}; // specifying the sub-expressions we are interested in
+    boost::sregex_token_iterator tokit(haystack_str.begin(), haystack_str.end(), r3, subindx), tokend;
 
-    while (rit != rend) {
-      cout << *rit++ << '\n';
+    while (tokit != tokend) {
+      cout << *tokit++ << '\n';
     }
+    cout << '\n';
 
   } catch (const std::exception &e) {
     cout << e.what();
