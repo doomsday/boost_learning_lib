@@ -1,27 +1,23 @@
-#include <boost/container/vector.hpp>
-#include <boost/foreach.hpp>
-#include <cassert>
+#include <string>
 #include <iostream>
-
-#include "String.hpp"
+#include <boost/container/flat_map.hpp>
 
 int main() {
 
-  boost::container::vector<String> strVec;
-  String world("world");
-  // Move temporary (rvalue)
-  strVec.push_back(String("Hello"));
-  // Error, copy semantics needed
-  //strVec.push_back(world);
-  // Explicit move
-  strVec.push_back(boost::move(world));
-  // World nulled after move
-  assert(world.get() == nullptr);
-  // In-place construction
-  strVec.emplace_back("Hujambo Dunia!");  // Swahili
+  using Capitals = boost::container::flat_map<std::string, std::string>;
+  Capitals newCapitals;
 
-  BOOST_FOREACH(auto& str, strVec) {
-    std::cout << str.get() << '\n';
+  newCapitals["Sri Lanka"] = "Sri Jayawardenepura Kotte";
+  newCapitals["Burma"] = "Naypyidaw";
+  newCapitals["Tanzania"] = "Dodoma";
+  newCapitals["Cote d'Ivoire"] = "Yamoussoukro";
+  newCapitals["Nigeria"] = "Abuja";
+  newCapitals["Kazakhstan"] = "Astana";
+  newCapitals["Palau"] = "Ngerulmud";
+  newCapitals["Federated States of Micronesia"] = "Palikir";
+
+  for (const auto& entries : newCapitals) {
+    std::cout << entries.first << ": " << entries.second << '\n';
   }
 
   return EXIT_SUCCESS;
