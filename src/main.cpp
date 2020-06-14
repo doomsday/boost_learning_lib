@@ -1,32 +1,27 @@
 #include <string>
 #include <iostream>
-#include <boost/container/flat_set.hpp>
-
-template<typename C>
-void printContainerInternals(const C& container) {
-  std::cout << "Container layout\n"
-            << "------------------\n";
-  for (const auto& elem : container) {
-    std::cout << "[Addr=" << &elem << "] : [value=" << elem << "]\n";
-  }
-}
+#include <boost/container/slist.hpp>
 
 int main() {
 
-  boost::container::flat_set<std::string> someStrings;
-  //someStrings.reserve(8);
+  boost::container::slist<std::string> geologic_eras;
 
-  someStrings.insert("Guitar");
-  printContainerInternals(someStrings);
+  geologic_eras.push_front("Neogene");
+  geologic_eras.push_front("Paleogene");
+  geologic_eras.push_front("Cretaceous");
+  geologic_eras.push_front("Jurassic");
+  geologic_eras.push_front("Triassic");
+  geologic_eras.push_front("Permian");
+  geologic_eras.push_front("Carboniferous");
+  geologic_eras.push_front("Devonian");
+  geologic_eras.push_front("Silurian");
+  geologic_eras.push_front("Ordovician");
+  geologic_eras.push_front("Cambrian");
 
-  someStrings.insert("Mandolin");
-  printContainerInternals(someStrings);
-
-  someStrings.insert("Cello");
-  printContainerInternals(someStrings);
-
-  someStrings.insert("Sitar");
-  printContainerInternals(someStrings);
+  // Newest first
+  for (const auto& str : geologic_eras) {
+    std::cout << str << '\n';
+  }
 
   return EXIT_SUCCESS;
 
