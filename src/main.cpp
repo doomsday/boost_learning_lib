@@ -1,24 +1,33 @@
 #include <string>
 #include <iostream>
-#include <boost/container/flat_map.hpp>
+#include <boost/container/flat_set.hpp>
+
+template<typename C>
+void printContainerInternals(const C& container) {
+  std::cout << "Container layout\n"
+            << "------------------\n";
+  for (const auto& elem : container) {
+    std::cout << "[Addr=" << &elem << "] : [value=" << elem << "]\n";
+  }
+}
 
 int main() {
 
-  using Capitals = boost::container::flat_map<std::string, std::string>;
-  Capitals newCapitals;
+  boost::container::flat_set<std::string> someStrings;
+  //someStrings.reserve(8);
 
-  newCapitals["Sri Lanka"] = "Sri Jayawardenepura Kotte";
-  newCapitals["Burma"] = "Naypyidaw";
-  newCapitals["Tanzania"] = "Dodoma";
-  newCapitals["Cote d'Ivoire"] = "Yamoussoukro";
-  newCapitals["Nigeria"] = "Abuja";
-  newCapitals["Kazakhstan"] = "Astana";
-  newCapitals["Palau"] = "Ngerulmud";
-  newCapitals["Federated States of Micronesia"] = "Palikir";
+  someStrings.insert("Guitar");
+  printContainerInternals(someStrings);
 
-  for (const auto& entries : newCapitals) {
-    std::cout << entries.first << ": " << entries.second << '\n';
-  }
+  someStrings.insert("Mandolin");
+  printContainerInternals(someStrings);
+
+  someStrings.insert("Cello");
+  printContainerInternals(someStrings);
+
+  someStrings.insert("Sitar");
+  printContainerInternals(someStrings);
 
   return EXIT_SUCCESS;
+
 }
