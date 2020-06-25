@@ -4,19 +4,44 @@
 
 int main() {
 
-  boost::container::slist<std::string> eras;
-  boost::container::slist<std::string>::iterator last = eras.before_begin();
+  using list_type = boost::container::slist<std::string>;
+  using iter_type = list_type::iterator;
 
-  const char *era_names [] = {"Cambrian", "Ordovician", "Silurian", "Devonian", "Carboniferous", "Silurian",
-                              "Devonian", "Carboniferous", "Cretaceous", "Paleogene", "Neogene"};
+  list_type dinos;
+  list_type::iterator last = dinos.before_begin();
 
-  for (const char *period : era_names) {
-    eras.emplace_after(last, period);
+  const char *dino_array [] = {"Elasmosaurus", "Fabrosaurus", "Galimimus", "Hadrosaurus", "Iguanodon", "Appatosaurus",
+                               "Brachiosaurus", "Corythosaurus", "Dilophosaurus"};
+
+  // fill the slist
+  for (const char *period : dino_array) {
+    dinos.emplace_after(last, period);
     ++last;
   }
 
-  for (const std::string& era : eras) {
-    std::cout << era << '\n';
+  // find the pivot
+  last = dinos.begin();
+  iter_type iter = last;
+
+  while(++iter != dinos.end()) {
+    // lexically smallest string
+    if (*last > *iter) {
+      break;
+    }
+    ++last; // points to the element immediately before iter
+  }
+
+  // find the end of the tail
+  auto itend = last;
+  while (iter != dinos.end()) {
+    ++itend;  // points to the last element in the list
+    ++iter;
+  }
+
+  // splice after
+  dinos.splice_after(dinos.before_begin(), dinos, last, itend);
+  for (const auto& str: dinos){
+    std::cout << str << '\n';
   }
 
   return EXIT_SUCCESS;
