@@ -1,48 +1,23 @@
 #include <string>
 #include <iostream>
-#include <boost/container/slist.hpp>
+#include <vector>
+#include <cassert>
 
 int main() {
 
-  using list_type = boost::container::slist<std::string>;
-  using iter_type = list_type::iterator;
-
-  list_type dinos;
-  list_type::iterator last = dinos.before_begin();
-
-  const char *dino_array [] = {"Elasmosaurus", "Fabrosaurus", "Galimimus", "Hadrosaurus", "Iguanodon", "Appatosaurus",
-                               "Brachiosaurus", "Corythosaurus", "Dilophosaurus"};
-
-  // fill the slist
-  for (const char *period : dino_array) {
-    dinos.emplace_after(last, period);
-    ++last;
+  std::vector<int> v {1, 2, 3, 4, 5};
+  auto first = v.begin();
+  auto last = first + v.size() - 1;
+  assert(*last == 5);
+  v.insert(last, 4);  // inserting new element before the element at the specified position
+  // *last = 10 // undefined behavior, invalid iterator
+  for (int i = 0; i < 1000; ++i) {
+    /* Even appending an element to the end of the vector could trigger a resize
+     * of the vector's internal storage, requiring elements to be moved */
+    v.push_back(i);
   }
 
-  // find the pivot
-  last = dinos.begin();
-  iter_type iter = last;
-
-  while(++iter != dinos.end()) {
-    // lexically smallest string
-    if (*last > *iter) {
-      break;
-    }
-    ++last; // points to the element immediately before iter
-  }
-
-  // find the end of the tail
-  auto itend = last;
-  while (iter != dinos.end()) {
-    ++itend;  // points to the last element in the list
-    ++iter;
-  }
-
-  // splice after
-  dinos.splice_after(dinos.before_begin(), dinos, last, itend);
-  for (const auto& str: dinos){
-    std::cout << str << '\n';
-  }
+  // *first = 0;  // likely invalidated
 
   return EXIT_SUCCESS;
 
